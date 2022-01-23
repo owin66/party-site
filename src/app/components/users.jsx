@@ -9,6 +9,7 @@ import api from '../api'
 const Users = ({users: allUsers, ...rest}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState()
+    const [selectedProf, setSelectedProf] = useState()
     const count = allUsers.length;
     const pageSize = 4;
     useEffect(() => {
@@ -19,14 +20,19 @@ const Users = ({users: allUsers, ...rest}) => {
         setCurrentPage(pageIndex);
     };
 
-    const handleProfessionSelect = (params) => {
+    const handleProfessionSelect = (item) => {
+        setSelectedProf(item)
     }
     console.log(professions)
     const usersCrop = paginate(allUsers, currentPage, pageSize);
     return (
         <>
-            {professions && <GroupList items={professions}
-                                       onItemSelect={handleProfessionSelect}/>}
+            {professions && (
+                <GroupList selectedItem={selectedProf}
+                           items={professions}
+                           onItemSelect={handleProfessionSelect}
+                />
+            )}
 
             {count > 0 && (
                 <table className="table">
@@ -58,10 +64,7 @@ const Users = ({users: allUsers, ...rest}) => {
     );
 };
 
-GroupList.defaultProps={
-    valueProperty:'_id',
-    contentProperty:'name'
-}
+
 Users.propTypes = {
     users: PropTypes.array
 };
