@@ -23,8 +23,10 @@ const Users = ({users: allUsers, ...rest}) => {
     const handleProfessionSelect = (item) => {
         setSelectedProf(item)
     }
-    console.log(professions)
-    const usersCrop = paginate(allUsers, currentPage, pageSize);
+    const filteredUsers = selectedProf
+        ? allUsers.filter((user) => user.profession === selectedProf)
+        : allUsers
+    const usersCrop = paginate(filteredUsers, currentPage, pageSize);
     return (
         <>
             {professions && (
