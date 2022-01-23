@@ -26,8 +26,6 @@ const Users = ({users: allUsers, ...rest}) => {
     return (
         <>
             {professions && <GroupList items={professions}
-                                       valueProperty='_id'
-                                       contentProperty='name'
                                        onItemSelect={handleProfessionSelect}/>}
 
             {count > 0 && (
@@ -59,6 +57,11 @@ const Users = ({users: allUsers, ...rest}) => {
         </>
     );
 };
+
+GroupList.defaultProps={
+    valueProperty:'_id',
+    contentProperty:'name'
+}
 Users.propTypes = {
     users: PropTypes.array
 };
