@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
-import { paginate } from "../utils/paginate";
+import {paginate} from "../utils/paginate";
 import Pagination from "./pagination";
 import api from "../api";
 import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
+import _ from 'lodash'
 
 
-
-const Users = ({ users: allUsers, ...rest }) => {
+const Users = ({users: allUsers, ...rest}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [sortBy, setSortBy] = useState({iter: 'name', order: 'asc'})
 
-    const pageSize = 2;
+    const pageSize = 8;
     useEffect(() => {
         api.professions.fetchAll().then((data) => setProfession(data));
     }, []);
@@ -31,20 +32,28 @@ const Users = ({ users: allUsers, ...rest }) => {
     };
 
     const handleSort = (item) => {
-        console.log(item)
+        if (sortBy.iter === item) {
+            setSortBy((prevState) => (
+                {...prevState, order: prevState.order === 'asc' ? 'desc' : 'asc'}))
+        } else {
+            setSortBy({iter: item, order: 'asc'})
+        }
     }
 
 
     const filteredUsers = selectedProf
         ? allUsers.filter(
-              (user) =>
-                  JSON.stringify(user.profession) ===
-                  JSON.stringify(selectedProf)
-          )
+            (user) =>
+                JSON.stringify(user.profession) ===
+                JSON.stringify(selectedProf)
+        )
         : allUsers;
 
     const count = filteredUsers.length;
-    const usersCrop = paginate(filteredUsers, currentPage, pageSize);
+    //sortered in abc
+    const sortedUsers = _.orderBy(filteredUsers, [sortBy.iter], [sortBy.order]);
+
+    const usersCrop = paginate(sortedUsers, currentPage, pageSize);
     const clearFilter = () => {
         setSelectedProf();
     };
@@ -68,9 +77,9 @@ const Users = ({ users: allUsers, ...rest }) => {
                 </div>
             )}
             <div className="d-flex flex-column">
-                <SearchStatus length={count} />
+                <SearchStatus length={count}/>
                 {count > 0 && (
-                <UserTable users={usersCrop} {...rest} onSort={handleSort}/>
+                    <UserTable users={usersCrop} {...rest} onSort={handleSort}/>
                 )}
                 <div className="d-flex justify-content-center">
                     <Pagination
