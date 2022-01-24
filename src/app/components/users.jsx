@@ -76,7 +76,7 @@ const Users = ({users: allUsers, ...rest}) => {
                 {count > 0 && (
                     <UserTable users={usersCrop} {...rest}
                                onSort={handleSort}
-                                currentSort={sortBy}/>
+                                selectedSort={sortBy}/>
                 )}
                 <div className="d-flex justify-content-center">
                     <Pagination
